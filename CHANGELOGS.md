@@ -14,3 +14,10 @@
     - Added new directory 'src/' for configuration/source files
         - Added new document 'wezterm.lua' : wezterm Configuration File
 
+#### 1032H
+- Updates
+    - Updated document 'wezterm.lua' in 'src/'
+        + Added new config update
+        - Reconfigured the config file to follow a 'individual configuration variables' style for each components (i.e. keybindings, terminal emulator config, event handler)
+            + The execution of the settings will be done in a for loop (unless it accepts a table as a parameter)
+
