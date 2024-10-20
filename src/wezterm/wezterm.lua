@@ -10,6 +10,8 @@ local font = wezterm.font  --- Wezterm Font Manager
 local config = wezterm.config_builder()
 
 -- Initialize Variables
+local opacity = 0.9 --- Recommended: 0.9 without background blur; 0 with background blur
+local transparent_bg = "rgba(22, 24, 26, " .. opacity .. ")"
 
 --- Contains a table of font names to its specifications
 local font_db = {
@@ -40,9 +42,45 @@ local keybindings = {
     -- - set the leader key using 'config.leader = { key = 'leader-key', mods = 'leader-modifier', timeout_milliseconds = amount-of-time-to-wait }'
     -- - You can combine modifiers using the '|' operator
 
+    --- Defaults remap
+    { key = "v", mods = "CTRL", action = wezterm.action({ PasteFrom = "Clipboard" }) }, --- Remap '<CTRL|SHIFT>v' to '<CTRL>v'
+
+    --- Wezterm Window Sessions
+    { key = "l", mods = "LEADER", action = act.ShowLauncher }, --- <ALT>l; Popup and show the launcher menu (Equivalent to right clicking on the '+' of the tab bar)
+    { key = "7", mods = "LEADER", action = wezterm.action.ShowLauncherArgs { flags = 'FUZZY|LAUNCH_MENU_ITEMS' }, }, --- <ALT>7; Popup and show a launch menu items fuzzy finder
+    { key = "8", mods = "LEADER", action = wezterm.action.ShowLauncherArgs { flags = 'FUZZY|WORKSPACES' }, }, --- <ALT>8; Popup and show a workspaces fuzzy finder
+    { key = "9", mods = "LEADER", action = wezterm.action.ShowLauncherArgs { flags = 'FUZZY|TABS' }, }, --- <ALT>9; Popup and show a Tabs fuzzy finder
+
     --- Window Panes Key Combinations
     { key = "h", mods = "LEADER", action = wezterm_action_alias["SplitHorizontal"] { domain = "CurrentPaneDomain" } }, --- Create a new horizontal pane with '<CTRL-B>h'
     { key = "v", mods = "LEADER", action = wezterm_action_alias["SplitVertical"] { domain = "CurrentPaneDomain" } }, --- Create a new vertical pane with '<CTRL-B>v'
+    { key = "p", mods = "LEADER", action =
+        --- <LEADER>t; Create a user input prompt to receive the name of a target shell, and create a new pane on the right starting with the specified shell
+        act.PromptInputLine {
+            description = "Obtain a shell and create a split horizontally using that shell",
+            initial_value = "bash",
+            action = wezterm_action_alias["ActionCallback"](function(window, pane, line)
+                -- line will be `nil` if they hit escape without entering anything
+                -- An empty string if they just hit enter
+                -- Or the actual line of text they wrote
+                if line then
+                    --- Line is provided
+                    --- Perform an action with the pane
+                    window:perform_action(
+                        --- Specify the action to perform
+                        act.SplitPane {
+                            --- Split pane with the specified size to the specified direction using the custom command
+                            direction = "Right",
+                            command = { args = { line } },
+                            size = { Percent = 50 },
+                        },
+                        --- Specify the object to target
+                        pane
+                    )
+                end
+            end),
+        }
+    },
 
     --- Event: Action Event Handler; Triggers the Event Callback Function when a key combination is pressed
     {
@@ -108,7 +146,8 @@ local config_table = {
 
     --- Set Window Specifications
     window_decorations = "INTEGRATED_BUTTONS|RESIZE", --- Configures whether the window has a title bar and/or resizable border; Options: NONE|TITLE|RESIZE|INTEGRATED_BUTTONS; Default: TITLE|RESIZE (Enable Title bar and border)
-    window_background_opacity = 0.8, --- Configures the Background opacity (transparency) of the Window; Type: Decimal/Float; Range: 0 (No opacity/transparent) - 1.0 (Full opacity)
+    window_background_opacity = opacity, --- Configures the Background opacity (transparency) of the Window; Type: Decimal/Float; Range: 0 (No opacity/transparent) - 1.0 (Full opacity)
+    win32_system_backdrop = "Auto", --- When combined with 'window_background_opacity', the chosen value will set a background effect to the window; Valid Options: Auto|Disable|Acrylic|Mica|Tabbed; The MacOS equivalent is 'macos_window_background_blur' which requires an alpha channel index
 
     --- Change colorscheme
     color_scheme = "AdventureTime",
