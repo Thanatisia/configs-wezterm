@@ -46,7 +46,8 @@
 ```bash
 $HOME/
 |
-|-- fonts/
+|-- colors/ : Contains your terminal emulator colorscheme '*.toml' files
+|-- fonts/  : Contains your terminal emulator font files
 |-- .wezterm.lua
 ```
 
@@ -59,7 +60,8 @@ $HOME/
     |
     |-- wezterm/
         |
-        |-- fonts/
+        |-- colors/ : Contains your terminal emulator colorscheme '*.toml' files
+        |-- fonts/ : Contains your terminal emulator font files
         |-- wezterm.lua
 ```
 
@@ -71,6 +73,15 @@ $HOME/
                 - The (default) root working directory containing the directories is starting from the same directory as your wezterm.lua file
                     + Windows: `%USERPROFILE%\<directory-here>`
                     + Linux: `$HOME/<directory-here>`
+            - Create colors directory
+                - Windows
+                    ```bash
+                    mkdir %USERPROFILE%\colors
+                    ```
+                - Linux
+                    ```bash
+                    mkdir -pv $HOME/colors
+                    ```
             - Create fonts directory
                 - Windows
                     ```bash
@@ -104,6 +115,15 @@ $HOME/
                 - The (default) root working directory containing the directories is starting from the same directory as your wezterm.lua file
                     + Windows: `%USERPROFILE%\.config\wezterm\<directory-here>`
                     + Linux: `$HOME/.config/wezterm/<directory-here>`
+            - Create colors directory
+                - Windows
+                    ```bash
+                    mkdir %USERPROFILE%\.config\wezterm\colors
+                    ```
+                - Linux
+                    ```bash
+                    mkdir -pv $HOME/.config/wezterm/colors
+                    ```
             - Create fonts directory
                 - Windows
                     ```bash
@@ -352,6 +372,11 @@ $HOME/
         }
         ```
 
+- List of Keybinding Actions (wezterm.action)
+    + `.SplitHorizontal` : Create a new pane with a horizontal split
+    + `.SplitVertical`   : Create a new pane with a vertical split
+    + `.action_callback` : Action Callback Event Handler Function; Execute a command in the background as a process when a key combination is pressed
+
 ### Window Management
 - Spawn a new Window and a new Tab and Pane within the new Window
     ```lua
@@ -437,6 +462,181 @@ wezterm [action] {options} <arguments>
         wezterm show-keys | grep "MOD-1|MOD-2|..."
         ```
 
+## Customization
+
+### Colorscheme TOML file
+
+> Description
++ Wezterm allows for the installation, importing and usage of custom colorschemes through dedicated *.toml colorscheme 'template' files
++ This segment/section contains a (relatively) detailed write-up on creating your own colorscheme template file, as well as how to install it
+
+> Setup
+
+- Pre-Requisites
+    - Ensure that the 'colors' assets directory is in the root directory containing your 'wezterm.lua'
+        - Windows
+            ```bash
+            mkdir %USERPROFILE%\.config\wezterm\colors
+            ```
+        - Linux
+            ```bash
+            mkdir -pv ~/.config/wezterm/colors
+            ```
+
+- Colorscheme Installation
+    - Manually
+        - Place your 'colorscheme-name.toml' file in the colors folder
+            ```bash
+            cp /path/to/repository/colorscheme-name.toml /path/to/wezterm/colors
+            ```
+    - Using git clone
+        - Clone the repository
+            ```bash
+            git clone https://github.com/repo-author/colorscheme-repo-name
+            ```
+        - Move the 'colorscheme-name.toml' colorscheme recipe file into the colors directory
+            - Notes
+                - In this example, I am assuming that the colors directory is using the XDG Home Directory format and therefore
+                    + is in `~/.config/wezterm/colors`
+            ```bash
+            cp colorscheme-name.toml ~/.config/wezterm/colors
+            ```
+
+- Colorscheme usage
+    - Setting and using the colorscheme in the Terminal Emulator configuration file
+        ```lua
+        config.color_scheme = "colorscheme-name"
+        ```
+
+> Key-Value Settings
+
+- Root Keys
+    - metadata : Contains your colorscheme's metadata and information
+        + `name = 'your-colorscheme-name'` : Define your colorscheme's name for use when setting the colorscheme in your configuration file
+        + `origin_url = 'https://github.com/repo-author/colorscheme-repo-name'` : Specify the repository's remote repository server (origin) URL
+    - colors : Contains the 'master key-value mapping of the colorscheme's settings to the respective color hexadecimal codes
+        + `ansi = [ "#ABCDEF", "#HEX", "#VALUES", "#HERE", ... ]`    : Specify your colorscheme ANSI hexadecimal color codes; Type <List>
+        + `brights = [ "#ABCDEF", "#HEX", "#VALUES", "#HERE", ... ]` : Specify your colorscheme bright hexadecimal color codes; Type <List>
+        + `background = "#ABCDEF"`      : Specify your colorscheme's background color hexadecimal code
+        + `foreground = "#ABCDEF"`      : Specify your colorscheme's foreground (text/font) color hexadecimal code
+        + `compose_cursor = '#ABCDEF'`  : Specify your colorscheme's compose cursor color hexadecimal code
+        + `cursor_bg = "#ABCDEF"`       : Specify your colorscheme's cursor background color hexadecimal code
+        + `cursor_border = "#ABCDEF"`   : Specify your colorscheme's cursor border color hexadecimal code
+        + `cursor_fg = "#ABCDEF"`       : Specify your colorscheme's cursor foreground (text/font) color hexadecimal code
+        + `selection_bg = "#ABCDEF"`    : Specify the background color hexadecimal code of the highlighted/selected area
+        + `selection_fg = "#ABCDEF"`    : Specify the foreground (text/font) color hexadecimal code of the highlighted/selected area
+        + `scrollbar_thumb = '#ABCDEF'` : Specify the scrollbar thumb/icon's color hexadecimal code
+        + `split = '#ABCDEF'`           : Specify the color hexadecimal code of the separator when splitting a pane
+        - indexed
+        - tab_bar : Specify your colorscheme's color hexadecimal codes for the tab bar
+            + `background = "#ABCDEF"` : Specify the background color hexadecimal code of the Tab bar
+            - active_tab : Specify your colorscheme's color hexadecimal codes for the current active tab
+                + `bg_color = "#ABCDEF"`  : Specify the background color hexadecimal code of the active tab within the tab bar
+                + `fg_color = "#ABCDEF"`  : Specify the foreground (text/font) color hexadecimal code of the active tab within the tab bar
+                + `intensity = "Normal"`  : Specify the intensity of the colors for the active tab
+                + `underline = "None"`    : Enable/Disable underlines in the active tab
+                + `italic = false`        : Enable/Disable italics in the font/texts of the active tab
+                + `strikethrough = false` : Enable/Disable strike-throughs in the font/texts of the active bar
+            - inactive_tab : Specify your colorscheme's color hexadecimal codes for the remaining inactive tabs
+                + `bg_color = "#ABCDEF"`  : Specify the background color hexadecimal code of the remaining inactive tabs within the tab bar
+                + `fg_color = "#ABCDEF"`  : Specify the foreground (text/font) color hexadecimal code of the inactive tabs within the tab bar
+                + `intensity = "Normal"`  : Specify the intensity of the colors for the remaining inactive tabs
+                + `italic = false`        : Enable/Disable italics in the font/texts of the remaining inactive tabs
+                + `strikethrough = false` : Enable/Disable strike-throughs in the font/texts of the remaining inactive tabs
+                + `underline = "None"`    : Enable/Disable underlines in the remaining inactive tabs
+            - inactive_tab_hover : Specify your colorscheme's color hexadecimal codes when hovering (mouse over) the remaining inactive tabs
+                + `bg_color = "#ABCDEF"`  : Specify the background color hexadecimal code when hovering (mouse over) the remaining inactive tabs within the tab bar
+                + `fg_color = "#ABCDEF"`  : Specify the foreground (text/font) color hexadecimal code when hovering (mouse over) the inactive tabs within the tab bar
+                + `intensity = "Normal"`  : Specify the intensity of the colors when hovering (mouse over) the remaining inactive tabs
+                + `italic = false`        : Enable/Disable italics in the font/texts when hovering (mouse over) the remaining inactive tabs
+                + `strikethrough = false` : Enable/Disable strike-throughs in the font/texts when hovering (mouse over) the remaining inactive tabs
+                + `underline = "None"`    : Enable/Disable underlines when hovering (mouse over) the remaining inactive tabs
+            - new_tab : Specify your colorscheme's color hexadecimal codes for new tabs
+                + `bg_color = "#ABCDEF"`  : Specify the background color hexadecimal code for new tabs
+                + `fg_color = "#ABCDEF"`  : Specify the foreground (text/font) color hexadecimal code for new tabs
+                + `intensity = "Normal"`  : Specify the intensity of the colors for new tabs
+                + `italic = false`        : Enable/Disable italics in the font/texts of new tabs
+                + `strikethrough = false` : Enable/Disable strike-throughs in the font/texts of new tabs
+                + `underline = "None"`    : Enable/Disable underlines in the font/texts of new tabs
+            - new_tab_hover : Specify your colorscheme's color hexadecimal codes when hovering (mouse over) new tabs
+                + `bg_color = "#ABCDEF"`  : Specify the background color hexadecimal code when hovering (mouse over) new tabs
+                + `fg_color = "#ABCDEF"`  : Specify the foreground (text/font) color hexadecimal code when hovering (mouse over) new tabs
+                + `intensity = "Normal"`  : Specify the intensity of the colors when hovering (mouse over) new tabs
+                + `italic = true`         : Enable/Disable italics in the font/texts when hovering (mouse over) new tabs
+                + `strikethrough = false` : Enable/Disable strike-throughs in the font/texts when hovering (mouse over) new tabs
+                + `underline = "None"`    : Enable/Disable underlines in the font/texts when hovering (mouse over) new tabs
+
+> Snippet
+
+```toml
+[colors]
+ansi = [ "#ABCDEF", "#HEX", "#VALUES", "#HERE", ... ] # Specify your colorscheme ANSI hexadecimal color codes
+brights = [ "#ABCDEF", "#HEX", "#VALUES", "#HERE", ... ] # Specify your colorscheme bright hexadecimal color codes
+
+background = "#ABCDEF" # Specify your colorscheme's background color hexadecimal code
+foreground = "#ABCDEF" # Specify your colorscheme's foreground (text/font) color hexadecimal code
+
+compose_cursor = '#ABCDEF' # Specify your colorscheme's compose cursor color hexadecimal code
+cursor_bg = "#ABCDEF"      # Specify your colorscheme's cursor background color hexadecimal code
+cursor_border = "#ABCDEF"  # Specify your colorscheme's cursor border color hexadecimal code
+cursor_fg = "#ABCDEF"      # Specify your colorscheme's cursor foreground (text/font) color hexadecimal code
+
+selection_bg = "#ABCDEF"   # Specify the background color hexadecimal code of the highlighted/selected area
+selection_fg = "#ABCDEF"   # Specify the foreground (text/font) color hexadecimal code of the highlighted/selected area
+
+scrollbar_thumb = '#ABCDEF' # Specify the scrollbar thumb/icon's color hexadecimal code
+split = '#ABCDEF'           # Specify the color hexadecimal code of the separator when splitting a pane
+
+[colors.indexed]
+
+[colors.tab_bar] # Specify your colorscheme's color hexadecimal codes for the tab bar
+background = "#ABCDEF" # Specify the background color hexadecimal code of the Tab bar
+
+[colors.tab_bar.active_tab] # Specify your colorscheme's color hexadecimal codes for the current active tab
+bg_color = "#ABCDEF"  # Specify the background color hexadecimal code of the active tab within the tab bar
+fg_color = "#ABCDEF"  # Specify the foreground (text/font) color hexadecimal code of the active tab within the tab bar
+intensity = "Normal"  # Specify the intensity of the colors for the active tab
+underline = "None"    # Enable/Disable underlines in the active tab
+italic = false        # Enable/Disable italics in the font/texts of the active tab
+strikethrough = false # Enable/Disable strike-throughs in the font/texts of the active bar
+
+[colors.tab_bar.inactive_tab] # Specify your colorscheme's color hexadecimal codes for the remaining inactive tabs
+bg_color = "#ABCDEF"  # Specify the background color hexadecimal code of the remaining inactive tabs within the tab bar
+fg_color = "#ABCDEF"  # Specify the foreground (text/font) color hexadecimal code of the inactive tabs within the tab bar
+intensity = "Normal"  # Specify the intensity of the colors for the remaining inactive tabs
+italic = false        # Enable/Disable italics in the font/texts of the remaining inactive tabs
+strikethrough = false # Enable/Disable strike-throughs in the font/texts of the remaining inactive tabs
+underline = "None"    # Enable/Disable underlines in the remaining inactive tabs
+
+[colors.tab_bar.inactive_tab_hover] # Specify your colorscheme's color hexadecimal codes when hovering (mouse over) the remaining inactive tabs
+bg_color = "#ABCDEF"  # Specify the background color hexadecimal code when hovering (mouse over) the remaining inactive tabs within the tab bar
+fg_color = "#ABCDEF"  # Specify the foreground (text/font) color hexadecimal code when hovering (mouse over) the inactive tabs within the tab bar
+intensity = "Normal"  # Specify the intensity of the colors when hovering (mouse over) the remaining inactive tabs
+italic = false        # Enable/Disable italics in the font/texts when hovering (mouse over) the remaining inactive tabs
+strikethrough = false # Enable/Disable strike-throughs in the font/texts when hovering (mouse over) the remaining inactive tabs
+underline = "None"    # Enable/Disable underlines when hovering (mouse over) the remaining inactive tabs
+
+[colors.tab_bar.new_tab] # Specify your colorscheme's color hexadecimal codes for new tabs
+bg_color = "#ABCDEF"  # Specify the background color hexadecimal code for new tabs
+fg_color = "#ABCDEF"  # Specify the foreground (text/font) color hexadecimal code for new tabs
+intensity = "Normal"  # Specify the intensity of the colors for new tabs
+italic = false        # Enable/Disable italics in the font/texts of new tabs
+strikethrough = false # Enable/Disable strike-throughs in the font/texts of new tabs
+underline = "None"    # Enable/Disable underlines in the font/texts of new tabs
+
+[colors.tab_bar.new_tab_hover] # Specify your colorscheme's color hexadecimal codes when hovering (mouse over) new tabs
+bg_color = "#ABCDEF"  # Specify the background color hexadecimal code when hovering (mouse over) new tabs
+fg_color = "#ABCDEF"  # Specify the foreground (text/font) color hexadecimal code when hovering (mouse over) new tabs
+intensity = "Normal"  # Specify the intensity of the colors when hovering (mouse over) new tabs
+italic = true         # Enable/Disable italics in the font/texts when hovering (mouse over) new tabs
+strikethrough = false # Enable/Disable strike-throughs in the font/texts when hovering (mouse over) new tabs
+underline = "None"    # Enable/Disable underlines in the font/texts when hovering (mouse over) new tabs
+
+[metadata]
+name = 'your-colorscheme-name'
+origin_url = 'https://github.com/repo-author/colorscheme-repo-name'
+```
+
 ## Wiki
 
 ### Templates
@@ -500,6 +700,77 @@ end)
 
 -- Return the configuration out back to wezterm
 return config
+```
+
+> colorscheme.toml
+
+```toml
+[colors]
+ansi = [ "#282433", "#e965a5", "#b1f2a7", "#ebde76", "#b1baf4", "#e192ef", "#b3f4f3", "#eee9fc" ] # Specify your colorscheme ANSI hexadecimal color codes
+brights = [ "#3f3951", "#e965a5", "#b1f2a7", "#ebde76", "#b1baf4", "#e192ef", "#b3f4f3", "#eee9fc" ] # Specify your colorscheme bright hexadecimal color codes
+
+background = "#282433" # Specify your colorscheme's background color hexadecimal code
+foreground = "#eee9fc" # Specify your colorscheme's foreground (text/font) color hexadecimal code
+
+compose_cursor = '#ebde76' # Specify your colorscheme's compose cursor color hexadecimal code
+cursor_bg = "#eee9fc"      # Specify your colorscheme's cursor background color hexadecimal code
+cursor_border = "#eee9fc"  # Specify your colorscheme's cursor border color hexadecimal code
+cursor_fg = "#eee9fc"      # Specify your colorscheme's cursor foreground (text/font) color hexadecimal code
+
+selection_bg = "#e965a5"   # Specify the background color hexadecimal code of the highlighted/selected area
+selection_fg = "#eee9fc"   # Specify the foreground (text/font) color hexadecimal code of the highlighted/selected area
+
+scrollbar_thumb = '#3f3951' # Specify the scrollbar thumb/icon's color hexadecimal code
+split = '#938aad'           # Specify the color hexadecimal code of the separator when splitting a pane
+
+[colors.indexed]
+
+[colors.tab_bar] # Specify your colorscheme's color hexadecimal codes for the tab bar
+background = "#282433" # Specify the background color hexadecimal code of the Tab bar
+
+[colors.tab_bar.active_tab] # Specify your colorscheme's color hexadecimal codes for the current active tab
+bg_color = "#282433"  # Specify the background color hexadecimal code of the active tab within the tab bar
+fg_color = "#e965a5"  # Specify the foreground (text/font) color hexadecimal code of the active tab within the tab bar
+intensity = "Normal"  # Specify the intensity of the colors for the active tab
+underline = "None"    # Enable/Disable underlines in the active tab
+italic = false        # Enable/Disable italics in the font/texts of the active tab
+strikethrough = false # Enable/Disable strike-throughs in the font/texts of the active bar
+
+[colors.tab_bar.inactive_tab] # Specify your colorscheme's color hexadecimal codes for the remaining inactive tabs
+bg_color = "#282433"  # Specify the background color hexadecimal code of the remaining inactive tabs within the tab bar
+fg_color = "#938aad"  # Specify the foreground (text/font) color hexadecimal code of the inactive tabs within the tab bar
+intensity = "Normal"  # Specify the intensity of the colors for the remaining inactive tabs
+italic = false        # Enable/Disable italics in the font/texts of the remaining inactive tabs
+strikethrough = false # Enable/Disable strike-throughs in the font/texts of the remaining inactive tabs
+underline = "None"    # Enable/Disable underlines in the remaining inactive tabs
+
+[colors.tab_bar.inactive_tab_hover] # Specify your colorscheme's color hexadecimal codes when hovering (mouse over) the remaining inactive tabs
+bg_color = "#e192ef"  # Specify the background color hexadecimal code when hovering (mouse over) the remaining inactive tabs within the tab bar
+fg_color = "#eee9fc"  # Specify the foreground (text/font) color hexadecimal code when hovering (mouse over) the inactive tabs within the tab bar
+intensity = "Normal"  # Specify the intensity of the colors when hovering (mouse over) the remaining inactive tabs
+italic = false        # Enable/Disable italics in the font/texts when hovering (mouse over) the remaining inactive tabs
+strikethrough = false # Enable/Disable strike-throughs in the font/texts when hovering (mouse over) the remaining inactive tabs
+underline = "None"    # Enable/Disable underlines when hovering (mouse over) the remaining inactive tabs
+
+[colors.tab_bar.new_tab] # Specify your colorscheme's color hexadecimal codes for new tabs
+bg_color = "#282433"  # Specify the background color hexadecimal code for new tabs
+fg_color = "#938aad"  # Specify the foreground (text/font) color hexadecimal code for new tabs
+intensity = "Normal"  # Specify the intensity of the colors for new tabs
+italic = false        # Enable/Disable italics in the font/texts of new tabs
+strikethrough = false # Enable/Disable strike-throughs in the font/texts of new tabs
+underline = "None"    # Enable/Disable underlines in the font/texts of new tabs
+
+[colors.tab_bar.new_tab_hover] # Specify your colorscheme's color hexadecimal codes when hovering (mouse over) new tabs
+bg_color = "#e192ef"  # Specify the background color hexadecimal code when hovering (mouse over) new tabs
+fg_color = "#eee9fc"  # Specify the foreground (text/font) color hexadecimal code when hovering (mouse over) new tabs
+intensity = "Normal"  # Specify the intensity of the colors when hovering (mouse over) new tabs
+italic = true         # Enable/Disable italics in the font/texts when hovering (mouse over) new tabs
+strikethrough = false # Enable/Disable strike-throughs in the font/texts when hovering (mouse over) new tabs
+underline = "None"    # Enable/Disable underlines in the font/texts when hovering (mouse over) new tabs
+
+[metadata]
+name = 'your-colorscheme-name'
+origin_url = 'https://github.com/repo-author/colorscheme-repo-name'
 ```
 
 ## Snippets

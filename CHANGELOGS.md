@@ -57,3 +57,16 @@
             + '<CTRL>DownArrow'        : Select the pane directly below
             + '<LEADER>x'              : Close the currently-selected pane
 
+#### 1644H
+- New
+    - Added new directory 'docs' for other documentations and side-information
+        - Added new directory 'colorschemes' for various useful/nice .toml and .lua colorschemes
+            - Added new directory 'lua' for *.lua script-based colorscheme
+                + Added new colorscheme document 'cyberdream.md' for the colorscheme 'scottmckendry/cyberdream.nvim'
+            - Added new directory 'toml' for *.toml configuration file-based colorschemes
+                + Added new colorscheme document 'hardhacker.md' for the colorscheme 'hardhackerlabs/themes-wezterm'
+- Updates
+    - Updated document 'README.md'
+        + Updated information on file structure and layout/hierarchy
+        + Added documentation for customizing wezterm Terminal Emulator's colorscheme
+
