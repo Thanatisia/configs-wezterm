@@ -11,7 +11,8 @@ local config = wezterm.config_builder()
 
 -- Initialize Variables
 local opacity = 0.9 --- Recommended: 0.9 without background blur; 0 with background blur
-local transparent_bg = "rgba(22, 24, 26, " .. opacity .. ")"
+local transparent_bg = "rgba(22, 24, 26, " .. opacity .. ")" --- Specify the transparency Alpha Channel RGBA value
+local background_colorscheme = "DefaultTransparencyNoBlur" --- Set the default background colorsheme name (from 'background_transparency_templates') for the Terminal Emulator
 
 --- Contains a table of font names to its specifications
 local font_db = {
@@ -19,6 +20,13 @@ local font_db = {
     HackNerdFontMono = {family="Hack Nerd Font Mono", weight="Regular", stretch="Normal", style="Normal"},
     JetBrainsMonoNerdFont = {family="JetBrainsMono Nerd Font", weight="Regular", stretch="Normal", style="Normal"},
     MonocraftNerdFont = {family="Monocraft Nerd Font", weight="Regular", stretch="Normal", style="Italic"}
+}
+
+--- Contains a table mapping a transparency combination to its alpha channel and opacity/transparency values
+local background_transparency_templates = {
+    DefaultTransparencyNoBlur = { window_background_opacity = opacity, win32_system_backdrop = "Auto", }, --- This background colorscheme uses the default opacity set in the 'default' variable but uses no blur
+    TransparentNoBlur = { window_background_opacity = 0.9, win32_system_backdrop = "Auto", }, --- This background colorscheme uses the transparency/opacity index '0.9' with no blur
+    AcrylicBlur = { window_background_opacity = 0.75, win32_system_backdrop = "Acrylic", }, --- This background colorscheme uses the transparency/opacity index 0.75 with an Acrylic Blur (Windows)
 }
 
 --- Contains a table mapping of the various wezterm terminal actions to an alias/name
@@ -146,8 +154,8 @@ local config_table = {
 
     --- Set Window Specifications
     window_decorations = "INTEGRATED_BUTTONS|RESIZE", --- Configures whether the window has a title bar and/or resizable border; Options: NONE|TITLE|RESIZE|INTEGRATED_BUTTONS; Default: TITLE|RESIZE (Enable Title bar and border)
-    window_background_opacity = opacity, --- Configures the Background opacity (transparency) of the Window; Type: Decimal/Float; Range: 0 (No opacity/transparent) - 1.0 (Full opacity)
-    win32_system_backdrop = "Auto", --- When combined with 'window_background_opacity', the chosen value will set a background effect to the window; Valid Options: Auto|Disable|Acrylic|Mica|Tabbed; The MacOS equivalent is 'macos_window_background_blur' which requires an alpha channel index
+    window_background_opacity = background_transparency_templates[background_colorscheme].window_background_opacity, --- Configures the Background opacity (transparency) of the Window; Type: Decimal/Float; Range: 0 (No opacity/transparent) - 1.0 (Full opacity)
+    win32_system_backdrop = background_transparency_templates[background_colorscheme].win32_system_backdrop, --- When combined with 'window_background_opacity', the chosen value will set a background effect to the window; Valid Options: Auto|Disable|Acrylic|Mica|Tabbed; The MacOS equivalent is 'macos_window_background_blur' which requires an alpha channel index
 
     --- Change colorscheme
     color_scheme = "AdventureTime",

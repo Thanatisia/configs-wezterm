@@ -3,6 +3,7 @@
 ## Table of Contents
 + [2024-10-19](#2024-10-19)
 + [2024-10-20](#2024-10-20)
++ [2024-10-21](#2024-10-21)
 
 ## Logs
 ### 2024-10-19
@@ -32,4 +33,13 @@
         + Added new keybinding for obtaining user input via a popup prompt menu and splitting a new pane with the new shell
         + Replaced the hard-coded opacity alpha channel value of 'window_background_opacity' to the defined variable 'opacity'
         + Added setting for background blurring
+
+### 2024-10-21
+#### 1619H
+- Updates
+    - Updated document 'wezterm.lua' in 'src/'
+        - Added a table mapping a transparency combination to => alpha channel and opacity/transparency values (Dictionary of transparency colorschemes)
+            + Testing to see which configuration format looks nicer
+        - Modified windows window_background_opacity and win32_system_backdrop to reference the transparency colorscheme map instead of hard-coded
+            + Added a default background transparency colorscheme
 
