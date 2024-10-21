@@ -165,7 +165,7 @@ local config_table = {
     win32_system_backdrop = background_transparency_templates[background_colorscheme].win32_system_backdrop, --- When combined with 'window_background_opacity', the chosen value will set a background effect to the window; Valid Options: Auto|Disable|Acrylic|Mica|Tabbed; The MacOS equivalent is 'macos_window_background_blur' which requires an alpha channel index
 
     --- Change colorscheme
-    color_scheme = "AdventureTime",
+    color_scheme = "hardhacker",
 
     --- Clipboard
     canonicalize_pasted_newlines = "CarriageReturn", --- Controls whether pasted texts will have newlines normalized

@@ -43,3 +43,17 @@
         - Modified windows window_background_opacity and win32_system_backdrop to reference the transparency colorscheme map instead of hard-coded
             + Added a default background transparency colorscheme
 
+#### 1630H
+- New
+    - Added new directory 'templates' for storing some wezterm configuration file templates
+- Updates
+    - Updated document 'wezterm.lua' in 'src/'
+        - Added new keybindings
+            + '<CTRL>LeftArrow'        : Select the pane directly on the left
+            + '<CTRL>RightArrow'       : Select the pane directly on the right
+            + '<CTRL-SHIFT>LeftArrow'  : Rotate/Move the pane to the right
+            + '<CTRL-SHIFT>RightArrow' : Rotate/Move the pane to the left
+            + '<CTRL>UpArrow'          : Select the pane directly above
+            + '<CTRL>DownArrow'        : Select the pane directly below
+            + '<LEADER>x'              : Close the currently-selected pane
+

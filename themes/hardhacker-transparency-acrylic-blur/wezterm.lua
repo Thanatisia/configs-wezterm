@@ -12,7 +12,7 @@ local config = wezterm.config_builder()
 -- Initialize Variables
 local opacity = 0.9 --- Recommended: 0.9 without background blur; 0 with background blur
 local transparent_bg = "rgba(22, 24, 26, " .. opacity .. ")" --- Specify the transparency Alpha Channel RGBA value
-local background_colorscheme = "DefaultTransparencyNoBlur" --- Set the default background colorsheme name (from 'background_transparency_templates') for the Terminal Emulator
+local background_colorscheme = "AcrylicBlur" --- Set the default background colorsheme name (from 'background_transparency_templates') for the Terminal Emulator
 
 --- Contains a table of font names to its specifications
 local font_db = {
@@ -165,7 +165,7 @@ local config_table = {
     win32_system_backdrop = background_transparency_templates[background_colorscheme].win32_system_backdrop, --- When combined with 'window_background_opacity', the chosen value will set a background effect to the window; Valid Options: Auto|Disable|Acrylic|Mica|Tabbed; The MacOS equivalent is 'macos_window_background_blur' which requires an alpha channel index
 
     --- Change colorscheme
-    color_scheme = "AdventureTime",
+    color_scheme = "hardhacker",
 
     --- Clipboard
     canonicalize_pasted_newlines = "CarriageReturn", --- Controls whether pasted texts will have newlines normalized
