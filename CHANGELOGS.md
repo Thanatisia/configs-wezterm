@@ -84,3 +84,8 @@
     - Updated document 'README.md'
         + Restructured/shuffled/shifted various section/segments for a better reading experience
 
+#### 1009H
+- Updates
+    - Updated document 'wezterm.lua' in 'src/'
+        + Added new event handler to update and display in the status bar
+

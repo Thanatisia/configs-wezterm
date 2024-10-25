@@ -133,6 +133,28 @@ local wezterm_event_handler_config = {
         --- NOTES:
         --- - '\n' : This will execute your shell command in the new tab
         --- pane_object:send_text "<your-command-here>\n"
+    end,
+    --- Event: Update Status Information; Update Status Bar to display system information/anything set on the window
+    ['update-status'] = function(window, pane)
+      -- Grab the utf8 character for the "powerline" left-facing solid arrow.
+      local SOLID_LEFT_ARROW = utf8.char(0xe0b2)
+
+      -- Grab the current window's configuration, and from it the palette (this is the combination of your chosen colour scheme including any overrides).
+      local color_scheme = window:effective_config().resolved_palette
+      local bg = color_scheme.background
+      local fg = color_scheme.foreground
+
+      -- Set the following text configuration to the right side of the window
+      window:set_right_status(wezterm.format({
+        -- First, we draw the arrow...
+        { Background = { Color = 'none' } },
+        { Foreground = { Color = bg } },
+        { Text = SOLID_LEFT_ARROW },
+        -- Then we draw our text
+        { Background = { Color = bg } },
+        { Foreground = { Color = fg } },
+        { Text = ' ' .. wezterm.hostname() .. ' ' },
+      }))
     end
 }
 
