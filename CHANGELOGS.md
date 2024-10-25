@@ -4,6 +4,7 @@
 + [2024-10-19](#2024-10-19)
 + [2024-10-20](#2024-10-20)
 + [2024-10-21](#2024-10-21)
++ [2024-10-25](#2024-10-25)
 
 ## Logs
 ### 2024-10-19
@@ -69,4 +70,17 @@
     - Updated document 'README.md'
         + Updated information on file structure and layout/hierarchy
         + Added documentation for customizing wezterm Terminal Emulator's colorscheme
+
+### 2024-10-25
+#### 0959H
+- New
+    - Added new directory 'wezterm' in 'docs/' for wezterm-related documentations
+        - Added new directory 'lua' for wezterm lua scripting documentations
+            - Added new directory 'api' for documentations specifically regarding the wezterm lua API
+                + Added new document 'configurations.md' containing docs containing the setting of Wezterm configuration key-values
+                + Added new document 'objects.md' containing docs regarding the Wezterm Objects (i.e. Tabs, Windows and Panes)
+                + Added new document 'standard-library.md' containing docs regarding the Wezterm Lua API standard library classes and functions
+- Updates
+    - Updated document 'README.md'
+        + Restructured/shuffled/shifted various section/segments for a better reading experience
 

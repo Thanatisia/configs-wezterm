@@ -28,43 +28,6 @@
         cp -r src/ ~/.config/wezterm
         ```
 
-## Configuration
-
-### Environment Variables
-+ `WEZTERM_CONFIG_DIR=/path/to/wezterm/configurations/root/directory` : Explicitly specify the path to wezterm's configuration directory
-+ `WEZTERM_CONFIG_FILE=/path/to/wezterm/configuration/file/wezterm.lua` : Explicitly specify the path to wezterm's configuration file (Default: $HOME/.wezterm.lua)
-+ `WEZTERM_EXECUTABLE=/path/to/wezterm/executable/wezterm-gui.exe` : Set the wezterm executable file path and name; Set automatically by the binary/executable
-+ `WEZTERM_EXECUTABLE_DIR=/path/to/wezterm/executable/directory` : Set the wezterm executable file's directory; Set automatically by the binary/executable
-+ `WEZTERM_PANE=[PANE_ID]` : Contains the Pane ID currently-selected Pane within the current window and tab
-+ `WEZTERM_PATH=/path/to/wezterm/executable/directory` : Same as `WEZTERM_EXECUTABLE_DIR`
-+ `WEZTERM_UNIX_SOCKET=/path/to/wezterm/gui-sock-[socket-id]` : Contains the wezterm GUI socket object file; Set automatically by the binary/executable
-
-### Configuration Structure Layout Hierarchy
-
-> Using the home directory
-
-```bash
-$HOME/
-|
-|-- colors/ : Contains your terminal emulator colorscheme '*.toml' files
-|-- fonts/  : Contains your terminal emulator font files
-|-- .wezterm.lua
-```
-
-> Using '.config'
-
-```bash
-$HOME/
-|
-|-- .config/
-    |
-    |-- wezterm/
-        |
-        |-- colors/ : Contains your terminal emulator colorscheme '*.toml' files
-        |-- fonts/ : Contains your terminal emulator font files
-        |-- wezterm.lua
-```
-
 ### Initial Setup
 - Setup the configuration file structure layout
     - Using the home directory
@@ -290,125 +253,6 @@ $HOME/
         return config
         ```
 
-### Wezterm Lua API
-
-#### Initial Configuration File Setup
-- Pull in the Wezterm API
-    ```lua
-    local wezterm = require'wezterm'
-    ```
-
-- Initialize the Wezterm component libraries/packages
-    - Weztrm Action and Keybindings
-        ```lua
-        local act = wezterm.action
-        ```
-    - Wezterm Multiplexer Server (Background Process) Configurations
-        ```lua
-        local mux = wezterm.mux
-        ```
-    - Wezterm Font Management
-        ```lua
-        local font = wezterm.font
-        ```
-
-- Initialize the configuration builder to hold the configuration key-value settings
-    ```lua
-    -- This will hold the configuration
-    local config = wezterm.config_builder()
-    ```
-
-### Terminal Emulator Settings Configuration
-- Apply your configuration choices
-    - Setting the configuration key using `config.<key>=value`
-        ```lua
-        config.<settings-key> = value
-        ```
-    - Setting the configuration key using `config[key]=value`
-        ```lua
-        config["settings-key"] = value
-        ```
-
-### Keybindings
-- Set the 'LEADER' PREFIX for the terminal emulator
-    - Explanation
-        + Set the `<leader>` prefix to execute custom keybindings
-        + Format: `modifier + key`
-        + Usage: `[modifier + key]<your-subsequent-keys>`
-        + This is similar to vim's 'leader' prefix and emac's prefix
-    ```lua
-    config.leader = { mods = '<your-leader-modifier>', key = '<your-prefix-keys>', timeout_milliseconds = 1000 }
-    ```
-
-- Set Keybindings for the Terminal Emulator
-    - Explanation
-        + Format: `{ key = 'subsequent-keys to press after the modifier key', mods = 'modifier key (primary key to press first)', action = 'command to execute' }`
-        - Modifier Labels:
-            + SUPER, CMD, WIN : Windows/Super key
-            + CTRL : Control Key
-            + SHIFT : Shift Key
-            + ALT, OPT, META : Alt key
-            + LEADER : The `<leader>` special modal modifier state managed by wezterm
-        + When the key `<modifier + key>subsequent-keys` is pressed, execute the action
-    - Notes:
-        + set the leader key using `config.leader = { key = 'leader-key', mods = 'leader-modifier', timeout_milliseconds = amount-of-time-to-wait }`
-        + You can combine modifiers using the '|' operator
-    - Wezterm Terminal Emulator Action Key Combinations
-        ```lua
-        config.keys = {
-            { mods = "SUPER|CMD|WIN|CTRL|SHIFT|ALT|OPT|META|LEADER", key = "your-subsequent-keys", action = wezterm.action.[your-wezterm-action-when-key-combination-is-pressed] },
-            -- ...
-        }
-        ```
-    - Wezterm Windows, Tabs and Panes Handler Key Combinations
-        ```lua
-        config.keys = {
-            { mods = "SUPER|CMD|WIN|CTRL|SHIFT|ALT|OPT|META|LEADER", key = "your-subsequent-keys", action = wezterm.action_callback(
-                function(win, pane)
-                    --- Event Callback Function Statements to execute when the key combination is pressed
-                end)
-            },
-            -- ...
-        }
-        ```
-
-- List of Keybinding Actions (wezterm.action)
-    + `.SplitHorizontal` : Create a new pane with a horizontal split
-    + `.SplitVertical`   : Create a new pane with a vertical split
-    + `.action_callback` : Action Callback Event Handler Function; Execute a command in the background as a process when a key combination is pressed
-
-### Window Management
-- Spawn a new Window and a new Tab and Pane within the new Window
-    ```lua
-    local tab, pane, window = mux.spawn_window {}
-    ```
-
-- Spawn Panes and Tabs in the current/specified Window object instance
-    ```lua
-    local new_tab, new_pane, _ = window:spawn_tab {}
-    ```
-
-- Split and spawn a new pane from the current pane in the same window and tab
-    ```lua
-    local new_pane = pane:split { }
-    ```
-
-- Send a command to a pane instance object and execute the system command in the new pane/tab's shell
-    - Notes
-        - `pane:send_text`: This will execute your shell command in the new tab
-        - '\r\n' : This is an escape sequence to go to the new line (Carriage Return); In UNIX, the carriage return is '\n' while in Windows/DOS, the carriage return is '\r\n'
-    ```lua
-    pane:send_text "your command arguments here\r\n"
-    ```
-
-### Terminal Emulator Event Handler Hooks and Callback Functions
-- To set/enable an Event to monitor
-    ```lua
-    wezterm.on('event-name', function()
-        -- Event Callback Function Statements to execute if event is triggered
-    end)
-    ```
-
 ## Documentations
 
 ### CLI Utility
@@ -462,9 +306,160 @@ wezterm [action] {options} <arguments>
         wezterm show-keys | grep "MOD-1|MOD-2|..."
         ```
 
-## Customization
+## Configuration
 
-### Colorscheme TOML file
+### Environment Variables
++ `WEZTERM_CONFIG_DIR=/path/to/wezterm/configurations/root/directory` : Explicitly specify the path to wezterm's configuration directory
++ `WEZTERM_CONFIG_FILE=/path/to/wezterm/configuration/file/wezterm.lua` : Explicitly specify the path to wezterm's configuration file (Default: $HOME/.wezterm.lua)
++ `WEZTERM_EXECUTABLE=/path/to/wezterm/executable/wezterm-gui.exe` : Set the wezterm executable file path and name; Set automatically by the binary/executable
++ `WEZTERM_EXECUTABLE_DIR=/path/to/wezterm/executable/directory` : Set the wezterm executable file's directory; Set automatically by the binary/executable
++ `WEZTERM_PANE=[PANE_ID]` : Contains the Pane ID currently-selected Pane within the current window and tab
++ `WEZTERM_PATH=/path/to/wezterm/executable/directory` : Same as `WEZTERM_EXECUTABLE_DIR`
++ `WEZTERM_UNIX_SOCKET=/path/to/wezterm/gui-sock-[socket-id]` : Contains the wezterm GUI socket object file; Set automatically by the binary/executable
+
+### Configuration Structure Layout Hierarchy
+
+> Using the home directory
+
+```bash
+$HOME/
+|
+|-- colors/ : Contains your terminal emulator colorscheme '*.toml' files
+|-- fonts/  : Contains your terminal emulator font files
+|-- .wezterm.lua
+```
+
+> Using '.config'
+
+```bash
+$HOME/
+|
+|-- .config/
+    |
+    |-- wezterm/
+        |
+        |-- colors/ : Contains your terminal emulator colorscheme '*.toml' files
+        |-- fonts/ : Contains your terminal emulator font files
+        |-- wezterm.lua
+```
+
+### Lua Configuration File
+
+#### Initial Configuration File Setup
+- Pull in the Wezterm API
+    ```lua
+    local wezterm = require'wezterm'
+    ```
+
+- Initialize the Wezterm component libraries/packages
+    - Weztrm Action and Keybindings
+        ```lua
+        local act = wezterm.action
+        ```
+    - Wezterm Multiplexer Server (Background Process) Configurations
+        ```lua
+        local mux = wezterm.mux
+        ```
+    - Wezterm Font Management
+        ```lua
+        local font = wezterm.font
+        ```
+
+- Initialize the configuration builder to hold the configuration key-value settings
+    ```lua
+    -- This will hold the configuration
+    local config = wezterm.config_builder()
+    ```
+
+#### Terminal Emulator Settings Configuration
+- Apply your configuration choices
+    - Setting the configuration key using `config.<key>=value`
+        ```lua
+        config.<settings-key> = value
+        ```
+    - Setting the configuration key using `config[key]=value`
+        ```lua
+        config["settings-key"] = value
+        ```
+
+#### Keybindings
+- Set the 'LEADER' PREFIX for the terminal emulator
+    - Explanation
+        + Set the `<leader>` prefix to execute custom keybindings
+        + Format: `modifier + key`
+        + Usage: `[modifier + key]<your-subsequent-keys>`
+        + This is similar to vim's 'leader' prefix and emac's prefix
+    ```lua
+    config.leader = { mods = '<your-leader-modifier>', key = '<your-prefix-keys>', timeout_milliseconds = 1000 }
+    ```
+
+- Set Keybindings for the Terminal Emulator
+    - Explanation
+        + Format: `{ key = 'subsequent-keys to press after the modifier key', mods = 'modifier key (primary key to press first)', action = 'command to execute' }`
+        - Modifier Labels:
+            + SUPER, CMD, WIN : Windows/Super key
+            + CTRL : Control Key
+            + SHIFT : Shift Key
+            + ALT, OPT, META : Alt key
+            + LEADER : The `<leader>` special modal modifier state managed by wezterm
+        + When the key `<modifier + key>subsequent-keys` is pressed, execute the action
+    - Notes:
+        + set the leader key using `config.leader = { key = 'leader-key', mods = 'leader-modifier', timeout_milliseconds = amount-of-time-to-wait }`
+        + You can combine modifiers using the '|' operator
+    - Wezterm Terminal Emulator Action Key Combinations
+        ```lua
+        config.keys = {
+            { mods = "SUPER|CMD|WIN|CTRL|SHIFT|ALT|OPT|META|LEADER", key = "your-subsequent-keys", action = wezterm.action.[your-wezterm-action-when-key-combination-is-pressed] },
+            -- ...
+        }
+        ```
+    - Wezterm Windows, Tabs and Panes Handler Key Combinations
+        ```lua
+        config.keys = {
+            { mods = "SUPER|CMD|WIN|CTRL|SHIFT|ALT|OPT|META|LEADER", key = "your-subsequent-keys", action = wezterm.action_callback(
+                function(win, pane)
+                    --- Event Callback Function Statements to execute when the key combination is pressed
+                end)
+            },
+            -- ...
+        }
+        ```
+
+#### Window Management
+- Spawn a new Window and a new Tab and Pane within the new Window
+    ```lua
+    local tab, pane, window = mux.spawn_window {}
+    ```
+
+- Spawn Panes and Tabs in the current/specified Window object instance
+    ```lua
+    local new_tab, new_pane, _ = window:spawn_tab {}
+    ```
+
+- Split and spawn a new pane from the current pane in the same window and tab
+    ```lua
+    local new_pane = pane:split { }
+    ```
+
+- Send a command to a pane instance object and execute the system command in the new pane/tab's shell
+    - Notes
+        - `pane:send_text`: This will execute your shell command in the new tab
+        - '\r\n' : This is an escape sequence to go to the new line (Carriage Return); In UNIX, the carriage return is '\n' while in Windows/DOS, the carriage return is '\r\n'
+    ```lua
+    pane:send_text "your command arguments here\r\n"
+    ```
+
+#### Terminal Emulator Event Handler Hooks and Callback Functions
+- To set/enable an Event to monitor
+    ```lua
+    wezterm.on('event-name', function()
+        -- Event Callback Function Statements to execute if event is triggered
+    end)
+    ```
+
+### Colorscheme
+
+#### TOML file
 
 > Description
 + Wezterm allows for the installation, importing and usage of custom colorschemes through dedicated *.toml colorscheme 'template' files
